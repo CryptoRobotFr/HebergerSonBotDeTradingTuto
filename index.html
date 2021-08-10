@@ -1,0 +1,729 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Installer votre bot de trading sur un serveur Amazon AWS</title><style>
+    /* cspell:disable-file */
+    /* webkit printing magic: print all background colors */
+    html {
+        -webkit-print-color-adjust: exact;
+    }
+    * {
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact;
+    }
+    
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    @media only screen {
+        body {
+            margin: 2em auto;
+            max-width: 900px;
+            color: rgb(55, 53, 47);
+        }
+    }
+    
+    body {
+        line-height: 1.5;
+        white-space: pre-wrap;
+    }
+    
+    a,
+    a.visited {
+        color: inherit;
+        text-decoration: underline;
+    }
+    
+    .pdf-relative-link-path {
+        font-size: 80%;
+        color: #444;
+    }
+    
+    h1,
+    h2,
+    h3 {
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-top: 0;
+        margin-bottom: 0.75em;
+    }
+    
+    h1 {
+        font-size: 1.875rem;
+        margin-top: 1.875rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+        margin-top: 1.25rem;
+    }
+    
+    .source {
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        padding: 1.5em;
+        word-break: break-all;
+    }
+    
+    .callout {
+        border-radius: 3px;
+        padding: 1rem;
+    }
+    
+    figure {
+        margin: 1.25em 0;
+        page-break-inside: avoid;
+    }
+    
+    figcaption {
+        opacity: 0.5;
+        font-size: 85%;
+        margin-top: 0.5em;
+    }
+    
+    mark {
+        background-color: transparent;
+    }
+    
+    .indented {
+        padding-left: 1.5em;
+    }
+    
+    hr {
+        background: transparent;
+        display: block;
+        width: 100%;
+        height: 1px;
+        visibility: visible;
+        border: none;
+        border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+    }
+    
+    img {
+        max-width: 100%;
+    }
+    
+    @media only print {
+        img {
+            max-height: 100vh;
+            object-fit: contain;
+        }
+    }
+    
+    @page {
+        margin: 1in;
+    }
+    
+    .collection-content {
+        font-size: 0.875rem;
+    }
+    
+    .column-list {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .column {
+        padding: 0 1em;
+    }
+    
+    .column:first-child {
+        padding-left: 0;
+    }
+    
+    .column:last-child {
+        padding-right: 0;
+    }
+    
+    .table_of_contents-item {
+        display: block;
+        font-size: 0.875rem;
+        line-height: 1.3;
+        padding: 0.125rem;
+    }
+    
+    .table_of_contents-indent-1 {
+        margin-left: 1.5rem;
+    }
+    
+    .table_of_contents-indent-2 {
+        margin-left: 3rem;
+    }
+    
+    .table_of_contents-indent-3 {
+        margin-left: 4.5rem;
+    }
+    
+    .table_of_contents-link {
+        text-decoration: none;
+        opacity: 0.7;
+        border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+    }
+    
+    table,
+    th,
+    td {
+        border: 1px solid rgba(55, 53, 47, 0.09);
+        border-collapse: collapse;
+    }
+    
+    table {
+        border-left: none;
+        border-right: none;
+    }
+    
+    th,
+    td {
+        font-weight: normal;
+        padding: 0.25em 0.5em;
+        line-height: 1.5;
+        min-height: 1.5em;
+        text-align: left;
+    }
+    
+    th {
+        color: rgba(55, 53, 47, 0.6);
+    }
+    
+    ol,
+    ul {
+        margin: 0;
+        margin-block-start: 0.6em;
+        margin-block-end: 0.6em;
+    }
+    
+    li > ol:first-child,
+    li > ul:first-child {
+        margin-block-start: 0.6em;
+    }
+    
+    ul > li {
+        list-style: disc;
+    }
+    
+    ul.to-do-list {
+        text-indent: -1.7em;
+    }
+    
+    ul.to-do-list > li {
+        list-style: none;
+    }
+    
+    .to-do-children-checked {
+        text-decoration: line-through;
+        opacity: 0.375;
+    }
+    
+    ul.toggle > li {
+        list-style: none;
+    }
+    
+    ul {
+        padding-inline-start: 1.7em;
+    }
+    
+    ul > li {
+        padding-left: 0.1em;
+    }
+    
+    ol {
+        padding-inline-start: 1.6em;
+    }
+    
+    ol > li {
+        padding-left: 0.2em;
+    }
+    
+    .mono ol {
+        padding-inline-start: 2em;
+    }
+    
+    .mono ol > li {
+        text-indent: -0.4em;
+    }
+    
+    .toggle {
+        padding-inline-start: 0em;
+        list-style-type: none;
+    }
+    
+    /* Indent toggle children */
+    .toggle > li > details {
+        padding-left: 1.7em;
+    }
+    
+    .toggle > li > details > summary {
+        margin-left: -1.1em;
+    }
+    
+    .selected-value {
+        display: inline-block;
+        padding: 0 0.5em;
+        background: rgba(206, 205, 202, 0.5);
+        border-radius: 3px;
+        margin-right: 0.5em;
+        margin-top: 0.3em;
+        margin-bottom: 0.3em;
+        white-space: nowrap;
+    }
+    
+    .collection-title {
+        display: inline-block;
+        margin-right: 1em;
+    }
+    
+    time {
+        opacity: 0.5;
+    }
+    
+    .icon {
+        display: inline-block;
+        max-width: 1.2em;
+        max-height: 1.2em;
+        text-decoration: none;
+        vertical-align: text-bottom;
+        margin-right: 0.5em;
+    }
+    
+    img.icon {
+        border-radius: 3px;
+    }
+    
+    .user-icon {
+        width: 1.5em;
+        height: 1.5em;
+        border-radius: 100%;
+        margin-right: 0.5rem;
+    }
+    
+    .user-icon-inner {
+        font-size: 0.8em;
+    }
+    
+    .text-icon {
+        border: 1px solid #000;
+        text-align: center;
+    }
+    
+    .page-cover-image {
+        display: block;
+        object-fit: cover;
+        width: 100%;
+        height: 30vh;
+    }
+    
+    .page-header-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .page-header-icon-with-cover {
+        margin-top: -0.72em;
+        margin-left: 0.07em;
+    }
+    
+    .page-header-icon img {
+        border-radius: 3px;
+    }
+    
+    .link-to-page {
+        margin: 1em 0;
+        padding: 0;
+        border: none;
+        font-weight: 500;
+    }
+    
+    p > .user {
+        opacity: 0.5;
+    }
+    
+    td > .user,
+    td > time {
+        white-space: nowrap;
+    }
+    
+    input[type="checkbox"] {
+        transform: scale(1.5);
+        margin-right: 0.6em;
+        vertical-align: middle;
+    }
+    
+    p {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+    
+    .image {
+        border: none;
+        margin: 1.5em 0;
+        padding: 0;
+        border-radius: 0;
+        text-align: center;
+    }
+    
+    .code,
+    code {
+        background: rgba(135, 131, 120, 0.15);
+        border-radius: 3px;
+        padding: 0.2em 0.4em;
+        border-radius: 3px;
+        font-size: 85%;
+        tab-size: 2;
+    }
+    
+    code {
+        color: #eb5757;
+    }
+    
+    .code {
+        padding: 1.5em 1em;
+    }
+    
+    .code-wrap {
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+    
+    .code > code {
+        background: none;
+        padding: 0;
+        font-size: 100%;
+        color: inherit;
+    }
+    
+    blockquote {
+        font-size: 1.25em;
+        margin: 1em 0;
+        padding-left: 1em;
+        border-left: 3px solid rgb(55, 53, 47);
+    }
+    
+    .bookmark {
+        text-decoration: none;
+        max-height: 8em;
+        padding: 0;
+        display: flex;
+        width: 100%;
+        align-items: stretch;
+    }
+    
+    .bookmark-title {
+        font-size: 0.85em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 1.75em;
+        white-space: nowrap;
+    }
+    
+    .bookmark-text {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .bookmark-info {
+        flex: 4 1 180px;
+        padding: 12px 14px 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .bookmark-image {
+        width: 33%;
+        flex: 1 1 180px;
+        display: block;
+        position: relative;
+        object-fit: cover;
+        border-radius: 1px;
+    }
+    
+    .bookmark-description {
+        color: rgba(55, 53, 47, 0.6);
+        font-size: 0.75em;
+        overflow: hidden;
+        max-height: 4.5em;
+        word-break: break-word;
+    }
+    
+    .bookmark-href {
+        font-size: 0.75em;
+        margin-top: 0.25em;
+    }
+    
+    .sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+    .code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+    .serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+    .mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+    .pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+    .pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+    .pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+    .pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+    .pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+    .pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+    .pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+    .pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+    .pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+    .pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+    .pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+    .pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+    .pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+    .pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+    .pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+    .pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+    .highlight-default {
+    }
+    .highlight-gray {
+        color: rgb(155,154,151);
+    }
+    .highlight-brown {
+        color: rgb(100,71,58);
+    }
+    .highlight-orange {
+        color: rgb(217,115,13);
+    }
+    .highlight-yellow {
+        color: rgb(223,171,1);
+    }
+    .highlight-teal {
+        color: rgb(15,123,108);
+    }
+    .highlight-blue {
+        color: rgb(11,110,153);
+    }
+    .highlight-purple {
+        color: rgb(105,64,165);
+    }
+    .highlight-pink {
+        color: rgb(173,26,114);
+    }
+    .highlight-red {
+        color: rgb(224,62,62);
+    }
+    .highlight-gray_background {
+        background: rgb(235,236,237);
+    }
+    .highlight-brown_background {
+        background: rgb(233,229,227);
+    }
+    .highlight-orange_background {
+        background: rgb(250,235,221);
+    }
+    .highlight-yellow_background {
+        background: rgb(251,243,219);
+    }
+    .highlight-teal_background {
+        background: rgb(221,237,234);
+    }
+    .highlight-blue_background {
+        background: rgb(221,235,241);
+    }
+    .highlight-purple_background {
+        background: rgb(234,228,242);
+    }
+    .highlight-pink_background {
+        background: rgb(244,223,235);
+    }
+    .highlight-red_background {
+        background: rgb(251,228,228);
+    }
+    .block-color-default {
+        color: inherit;
+        fill: inherit;
+    }
+    .block-color-gray {
+        color: rgba(55, 53, 47, 0.6);
+        fill: rgba(55, 53, 47, 0.6);
+    }
+    .block-color-brown {
+        color: rgb(100,71,58);
+        fill: rgb(100,71,58);
+    }
+    .block-color-orange {
+        color: rgb(217,115,13);
+        fill: rgb(217,115,13);
+    }
+    .block-color-yellow {
+        color: rgb(223,171,1);
+        fill: rgb(223,171,1);
+    }
+    .block-color-teal {
+        color: rgb(15,123,108);
+        fill: rgb(15,123,108);
+    }
+    .block-color-blue {
+        color: rgb(11,110,153);
+        fill: rgb(11,110,153);
+    }
+    .block-color-purple {
+        color: rgb(105,64,165);
+        fill: rgb(105,64,165);
+    }
+    .block-color-pink {
+        color: rgb(173,26,114);
+        fill: rgb(173,26,114);
+    }
+    .block-color-red {
+        color: rgb(224,62,62);
+        fill: rgb(224,62,62);
+    }
+    .block-color-gray_background {
+        background: rgb(235,236,237);
+    }
+    .block-color-brown_background {
+        background: rgb(233,229,227);
+    }
+    .block-color-orange_background {
+        background: rgb(250,235,221);
+    }
+    .block-color-yellow_background {
+        background: rgb(251,243,219);
+    }
+    .block-color-teal_background {
+        background: rgb(221,237,234);
+    }
+    .block-color-blue_background {
+        background: rgb(221,235,241);
+    }
+    .block-color-purple_background {
+        background: rgb(234,228,242);
+    }
+    .block-color-pink_background {
+        background: rgb(244,223,235);
+    }
+    .block-color-red_background {
+        background: rgb(251,228,228);
+    }
+    .select-value-color-default { background-color: rgba(206,205,202,0.5); }
+    .select-value-color-gray { background-color: rgba(155,154,151, 0.4); }
+    .select-value-color-brown { background-color: rgba(140,46,0,0.2); }
+    .select-value-color-orange { background-color: rgba(245,93,0,0.2); }
+    .select-value-color-yellow { background-color: rgba(233,168,0,0.2); }
+    .select-value-color-green { background-color: rgba(0,135,107,0.2); }
+    .select-value-color-blue { background-color: rgba(0,120,223,0.2); }
+    .select-value-color-purple { background-color: rgba(103,36,222,0.2); }
+    .select-value-color-pink { background-color: rgba(221,0,129,0.2); }
+    .select-value-color-red { background-color: rgba(255,0,26,0.2); }
+    
+    .checkbox {
+        display: inline-flex;
+        vertical-align: text-bottom;
+        width: 16;
+        height: 16;
+        background-size: 16px;
+        margin-left: 2px;
+        margin-right: 5px;
+    }
+    
+    .checkbox-on {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+    }
+    
+    .checkbox-off {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+    }
+        
+    </style></head><body><article id="53cf4d15-e1c4-4c13-ac7f-7703b8623c24" class="page sans"><header><img class="page-cover-image" src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-1.2.1&amp;q=85&amp;fm=jpg&amp;crop=entropy&amp;cs=srgb" style="object-position:center 50%"/><div class="page-header-icon page-header-icon-with-cover"><span class="icon">🤖</span></div><h1 class="page-title">Installer votre bot de trading sur un serveur Amazon AWS</h1><table class="properties"><tbody></tbody></table></header><div class="page-body"><h1 id="b3517ec1-b691-493b-a578-53cfb8540dfa" class="block-color-yellow_background">Introduction:</h1><p id="3203de62-7c65-4571-af09-2b8fb80727ef" class="">
+    </p><p id="9281d82e-31ba-4c43-b89d-271b131d6ea6" class=""><strong>Ce petit guide vous permettra d&#x27;installer gratuitement sur un serveur Amazon AWS le Bot de Trading présenté dans cette vidéo : </strong></p><figure id="6cb97c53-df9e-4d1a-8cbe-22f9663ea95d"><a href="https://youtu.be/mPigk8JBmTs" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Comment utiliser le RSI et tous ses aspects | DIVERGENCE haussière sur le BTC - Spécial indicateur</div><div class="bookmark-description">Nous passons à la loupe un des indicateurs les plus connus du chartisme, le fameux RSI ! Son histoire, son calcul et les techniques de trading associées, on ...</div></div><div class="bookmark-href"><img src="https://www.youtube.com/s/desktop/974c4f1e/img/favicon.ico" class="icon bookmark-icon"/>https://youtu.be/mPigk8JBmTs</div></div><img src="https://i.ytimg.com/vi/mPigk8JBmTs/hqdefault.jpg" class="bookmark-image"/></a></figure><hr id="074346bb-df9d-459e-9d42-9f69311ed2e9"/><p id="fbf154ef-cdff-4e06-9bc8-48231b07c95f" class=""><strong>Si tu rencontres des problème lors de l&#x27;installation tu peux venir poser tes questions sur notre Discord :</strong></p><figure id="25e01b01-5b63-4981-ab75-72148cd8b137"><a href="https://discord.gg/tzMymmEmfc" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Join the Crypto Robot Discord Server!</div><div class="bookmark-description">Check out the Crypto Robot community on Discord - hang out with 96 other members and enjoy free voice and text chat.</div></div><div class="bookmark-href"><img src="https://discord.com/assets/847541504914fd33810e70a0ea73177e.ico" class="icon bookmark-icon"/>https://discord.gg/tzMymmEmfc</div></div><img src="https://cdn.discordapp.com/icons/866447650291318835/6ca1f0d98f47c01946cf3e9b9f63c248.jpg?size=256" class="bookmark-image"/></a></figure><h1 id="df40a246-79c3-46bc-afe1-da01e8fd3c3f" class="block-color-red_background">/!\ Disclaimer :</h1><p id="256d49a5-e662-4177-87cd-f7375150810b" class="block-color-red_background">
+    Ce guide est un tutoriel pour installer un bot de trading mais en rien un conseil financier, le script est ici pris en exemple et on vous conseille même de créer le votre, les performances sur le passé ne garantissent en rien une performance sur le futur.</p><hr id="94b342b8-2016-492a-87f2-2ef97abb84d4"/><p id="04e65103-3cca-41f9-9e3b-9ff6936aa096" class="">
+    </p><h1 id="370b8777-7b63-4b85-91ee-18ea74e7d5e5" class="block-color-teal_background">Requirement :</h1><p id="54b022a2-105a-4baf-b10e-f667691592c1" class="block-color-teal_background">Avoir un compte FTX pour vous inscrire utilisez ce lien (cela réduira vos futurs frais) :</p><figure id="7f4854b9-927b-4f5c-a7bd-8bb8ca284ba4"><a href="https://ftx.com/#a=cryptorobot" class="block-color-teal_background bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">FTX</div><div class="bookmark-description">FTX Cryptocurrency Derivatives Exchange, built by traders, for traders. Buy and sell BTC, ETH, USDT, BNB futures and index futures with up to 101x leverage.</div></div><div class="bookmark-href"><img src="https://ftx.com/favicon.ico?v=2" class="icon bookmark-icon"/>https://ftx.com/#a=cryptorobot</div></div><img src="https://i.imgur.com/yQDvfFn.png" class="bookmark-image"/></a></figure><hr id="d18a1d12-f859-4cb8-8c12-d7dcea17f7b1"/><h1 id="ea3d6781-fb4a-4095-86e9-6b29bb1fd592" class="block-color-yellow_background">Début du Tutoriel :</h1><p id="2f44fb74-8f35-490b-bcb6-6f8db09b3663" class="">
+    </p><p id="9e5307ae-ed13-4f8e-8510-f28490daf901" class="">La première chose à faire est de vous créer un compte Amazon AWS (Vous aurez besoin d&#x27;un numéro de carte Bleu valide mais si vous suivez le tutoriel tout sera gratuit pendant 1 an) via ce lien: </p><figure id="01aa557c-4955-4fc0-aa70-01ff047dd15d"><a href="https://aws.amazon.com/fr/" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Services et produits de cloud Amazon | AWS</div><div class="bookmark-description">Que vous recherchiez des options de puissance de calcul, de stockage de bases de données, de diffusion de contenu ou d&#x27;autres fonctionnalités, AWS dispose des services nécessaires pour vous aider à créer des applications sophistiquées avec une flexibilité, une scalabilité et une fiabilité accrues.</div></div><div class="bookmark-href"><img src="https://a0.awsstatic.com/libra-css/images/site/fav/favicon.ico" class="icon bookmark-icon"/>https://aws.amazon.com/fr/</div></div><img src="https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png" class="bookmark-image"/></a></figure><p id="a4fbfd94-90ac-418a-a550-f123003227ce" class="">
+    </p><p id="c4a1387a-32d1-4e64-899f-1b9766ef45ba" class="">Une fois votre compte créé, accédez à AWS managment console et connectez vous en tant qu&#x27;utilisateur root.
+    
+    Une fois sur votre dashboard dans la bar de recherche, tapez EC2 et cliquez dessus. 
+    A gauche sélectionnez &quot;<mark class="highlight-orange_background">Instance</mark>&quot;, enfin cliquez sur le bouton &quot;<mark class="highlight-orange_background">Lancez des instances</mark>&quot; en hat à droite.
+    Sélectionnez Ubuntu Server dernière version (pour moi c&#x27;est Ubuntu Server 20.04).
+    Vérifiez que le type d&#x27;instance sélectionnée est une T2 micro (éligible à l&#x27;offre gratuite).
+    Cliquez sur le bouton &quot;<mark class="highlight-orange_background">Vérifier et Lancer</mark>&quot;. Puis cliquez sur le bouton &quot;<mark class="highlight-orange_background">Lancer</mark>&quot;.
+    
+    Choisissez l&#x27;option &quot;<mark class="highlight-orange_background">créer une nouvelle paire de clés</mark>&quot;, nommez là comme vous le voulez et enregistrez là sur votre ordinateur quelque part ou vous pouvez la retrouver, vous obtiendrez un fichier .pem . Puis cliquer sur le bouton &quot;<mark class="highlight-orange_background">Lancer des instances</mark>&quot;
+    </p><p id="624265fe-6f71-44f4-8ac6-c67afc5a796b" class="">Ensuite installez le logiciel Putty (cela vous permettra de vous connecter à votre serveur)  : </p><figure id="1f2b5aec-f803-4a60-8de2-17ab459c7061"><a href="https://www.putty.org/" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Download PuTTY - a free SSH and telnet client for Windows</div><div class="bookmark-description">PuTTY is an SSH and telnet client, developed originally by Simon Tatham for the Windows platform. PuTTY is open source software that is available with source code and is developed and supported by a group of volunteers. You can download PuTTY here. Bitvise SSH Client is an SSH and SFTP client for Windows.</div></div><div class="bookmark-href">https://www.putty.org/</div></div><img src="https://www.putty.org/Putty.png" class="bookmark-image"/></a></figure><p id="bccfc986-7d6b-48ac-b167-67fe208a342e" class="">
+    </p><p id="c938814d-ac3f-4a25-b696-18c3d2cd34c1" class="">Une fois installé cela devrez également avoir installé un logiciel qui s&#x27;appelle PuttyGen, ouvrez le grâce à votre barre de recherche windows, cliquez sur le bouton &quot;<mark class="highlight-orange_background">load</mark>&quot;, sélectionnez &quot;<mark class="highlight-orange_background">All files</mark>&quot; en bas à droite et ouvrez votre fichier .pem que vous avez enregistré plus tôt. Une fois load vous pouvez cliquer sur &quot;<mark class="highlight-orange_background">save Private Key</mark>&quot; et enregistrer le fichier .ppk quelque part ou vous pouvez le retrouver. Vous pouvez ensuite fermer PuttyGen.</p><p id="9236f869-388e-4d05-8692-ebcaef9b9625" class="">
+    </p><p id="f7992a40-9939-43e7-a6b7-c3d574ec50f8" class="">Maintenant vous pouvez ouvrir Putty, dans la barre hostname vous remplissez avec votre DNS IPv4 public que vous pouvez trouver dans aws-ec2-instance et vous rajouter devant @ubuntu exemple :</p><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="a7bf33df-9655-439e-ab56-18910d39bb8c"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">ubuntu@ec2-15-188-82-81.eu-west-3.compute.amazonaws.com</div></figure><p id="ce8214cb-fb79-4601-a076-5b5926f93139" class="">
+    </p><p id="73b2c8a3-3b38-40b1-9c19-4bf12e405ea0" class="">Ensuite dans le menu à gauche cliquez sur le bouton &quot;<mark class="highlight-orange_background">+</mark>&quot; de &quot;SSH&quot; et cliquez sur &quot;<mark class="highlight-orange_background">auth</mark>&quot;, puis cliquez sur &quot;<mark class="highlight-orange_background">Browse</mark>&quot; pour le champs Private key file for authentification, parcourez jusqu&#x27;à sélectionner le fichier .ppk que vous avez générer plus tôt grâce à PuttyGen. Ensuite vous pouvez revenir dans Session tout en haut à gauche et cliquer sur &quot;<mark class="highlight-orange_background">Open</mark>&quot;
+    
+    Vous êtes normalement maintenant sur votre console de votre serveur AWS. Pour installer votre bot de trading tapez les commandes suivantes dans l&#x27;ordre : </p><pre id="7483ada7-3440-43b0-b629-966fcc289304" class="code"><code>sudo apt-get update
+    sudo apt install python3-pip
+    pip install pandas
+    pip install ta
+    pip install ftx
+    pip install ciso8601</code></pre><p id="3a72ef99-9d74-43e9-bbf2-ee7eba56914c" class="">Vous avez maintenant tous les prérequis pour ajouter votre script python de bot de trading pour ça faites : </p><p id="a806caa3-6268-4fc5-9e9f-2b5d05325140" class=""> </p><pre id="242b1d09-5599-44fa-9fcf-7401fbad426e" class="code"><code>nano firstBot.py</code></pre><p id="bd5caa50-861a-403b-83f8-8fc9a3319451" class="">Vous devez maintenant être dans un éditeur de code, vous pouvez copier le code ci dessous et le coller (clique droit pour coller dans une console ubuntu) dans votre éditeur de code nano :</p><pre id="58afb82c-6ac4-45a2-aa34-bb5c8a1e10ac" class="code"><code>import ftx
+    import pandas as pd
+    import ta
+    import time
+    import json
+    from math import *
+    
+    accountName = &#x27;&#x27;
+    pairSymbol = &#x27;ETH/USD&#x27;
+    fiatSymbol = &#x27;USD&#x27;
+    cryptoSymbol = &#x27;ETH&#x27;
+    myTruncate = 3
+    
+    client = ftx.FtxClient(api_key=&#x27;&#x27;,
+                       api_secret=&#x27;&#x27;, subaccount_name=accountName)
+    
+    data = client.get_historical_data(
+        market_name=pairSymbol, 
+        resolution=3600, 
+        limit=1000, 
+        start_time=float(
+        round(time.time()))-100*3600, 
+        end_time=float(round(time.time())))
+    df = pd.DataFrame(data)
+    
+    df[&#x27;EMA28&#x27;]=ta.trend.ema_indicator(df[&#x27;close&#x27;], 28)
+    df[&#x27;EMA48&#x27;]=ta.trend.ema_indicator(df[&#x27;close&#x27;], 48)
+    df[&#x27;STOCH_RSI&#x27;]=ta.momentum.stochrsi(df[&#x27;close&#x27;])
+    #print(df)
+    
+    def getBalance(myclient, coin):
+        jsonBalance = myclient.get_balances()
+        pandaBalance = pd.DataFrame(jsonBalance)
+        if pandaBalance.loc[pandaBalance[&#x27;coin&#x27;] == coin].empty : return 0
+        else : return float(pandaBalance.loc[pandaBalance[&#x27;coin&#x27;] == coin][&#x27;free&#x27;])
+    
+    def truncate(n, decimals=0):
+        r = floor(float(n)*10**decimals)/10**decimals
+        return str(r)
+        
+    
+    actualPrice = df[&#x27;close&#x27;].iloc[-1]
+    fiatAmount = getBalance(client, fiatSymbol)
+    cryptoAmount = getBalance(client, cryptoSymbol)
+    print(&#x27;coin price :&#x27;,actualPrice, &#x27;usd balance&#x27;, fiatAmount, &#x27;coin balance :&#x27;,cryptoAmount)
+    
+    if float(fiatAmount) &gt; 5 and df[&#x27;EMA28&#x27;].iloc[-2] &gt; df[&#x27;EMA48&#x27;].iloc[-2] and df[&#x27;STOCH_RSI&#x27;].iloc[-2] &lt; 0.8:
+        quantityBuy = truncate(float(fiatAmount)/actualPrice, myTruncate)
+        buyOrder = client.place_order(
+            market=pairSymbol, 
+            side=&quot;buy&quot;, 
+            price=None, 
+            size=quantityBuy, 
+            type=&#x27;market&#x27;)
+        print(buyOrder)
+    
+    elif float(cryptoAmount) &gt; 0.001 and df[&#x27;EMA28&#x27;].iloc[-2] &lt; df[&#x27;EMA48&#x27;].iloc[-2] and df[&#x27;STOCH_RSI&#x27;].iloc[-2] &gt; 0.2:
+        buyOrder = client.place_order(
+            market=pairSymbol, 
+            side=&quot;sell&quot;, 
+            price=None, 
+            size=truncate(cryptoAmount, myTruncate), 
+            type=&#x27;market&#x27;)
+        print(buyOrder)
+    else :
+      print(&quot;No opportunity to take&quot;)</code></pre><p id="a5475d51-df4f-4bc1-878d-c93466f717f1" class="">Ce code est le script du cross EMA + stoch RSI, vous pouvez l&#x27;utiliser à votre guise nous proposons le code open source ou vous pouvez créer votre propre script</p><p id="f6c6c6d4-e2aa-48ed-b906-a9468ebbf646" class="">
+    </p><p id="3c2c023f-5cf9-4689-b09d-27b342ea0cfc" class="">N&#x27;oubliez pas de remplacer avec les infos de votre compte FTX, remplissez avec votre account_name et remplissez vos 2 api keys dans la ligne &quot;client = ftx.Client...&quot;</p><p id="88534f46-c3a5-459f-b88b-d0e16129374e" class="">
+    </p><p id="1403bb9e-7711-4a65-acc3-4cfa47300cac" class="">Une fois que vous avez copié collé ceci vous faire Ctrl+s pour sauvegarder et Ctrl+x pour quitter.</p><p id="4969274f-0331-4015-b1ac-4f773243ace5" class="">Vous pouvez maintenant essayer d&#x27;exécuter votre code à la main avec :</p><pre id="57937ed9-26f3-4609-ac29-7cb3acfc7554" class="code"><code>python3 firstBot.py</code></pre><p id="c966ae7f-1888-4c3f-96a0-df7baee71883" class="">Si cela ne vous affiche pas d&#x27;erreur votre bot est prêt à marcher.</p><p id="92a45ffe-491d-465a-a83c-2e4e86c037da" class="">
+    </p><p id="24b88426-afd8-48f2-8e57-7a0f60eb272f" class="">Pour que le script s&#x27;exécute toutes les heures il faut éditer ce que l&#x27;on appelle le CRON pour ça :</p><pre id="2049e6ee-ee20-44dc-bad4-23df467b9e9f" class="code"><code>crontab -e</code></pre><p id="92d6e039-9c00-4d6b-86a8-a7fee32eb32e" class="">Cela devrez vous ouvrir un fichier avec du texte commenté dedans vous pouvez grâce aux flèches aller tout en bas et rajouter la ligne :</p><pre id="a7ea3d8c-8020-4bd9-b667-211fd9b2364d" class="code"><code>0 * * * * python3 firstBot.py</code></pre><p id="14a877e7-9927-4885-82e2-698ac686b6eb" class="">Faire Ctrl+s puis Ctrl+x et voilà tout est prêt si tout marche bien votre bot devrait tourner tout seul comme un grand maintenant vous pouvez quitter la console ubuntu en fermant la fenêtre Putty.</p><p id="f6a13219-b1f1-4b13-9055-8569b513e4c8" class="">
+    </p><p id="367cd131-8dd4-4001-a347-75f5a29b5b39" class="">Si ce Tutoriel vous a plu n&#x27;hésitez pas à vous abonner à la chaîne Youtube CryptoRobot : </p><figure id="50451a59-d6d5-4f77-b212-96c8859f26ed"><a href="https://www.youtube.com/channel/UCGjfXO9kR34es5IsHLyP5eA" class="bookmark source"><div class="bookmark-info"><div class="bookmark-text"><div class="bookmark-title">Crypto Robot</div><div class="bookmark-description">Bienvenue, Crypto Robot est la première chaine Youtube française proposant la création de bot de trading personnel. Nous vous aidons à développer votre indépendance financière via des outils dont vous êtes les propriétaires !</div></div><div class="bookmark-href"><img src="https://www.youtube.com/s/desktop/974c4f1e/img/favicon.ico" class="icon bookmark-icon"/>https://www.youtube.com/channel/UCGjfXO9kR34es5IsHLyP5eA</div></div><img src="https://yt3.ggpht.com/zhW-D0r2Qqkb7Zzo26K4zf6xwK_9Ior0ICio5K7Nj4wADerqo0QDQ1uMQE87eJA5x8lAhiFAFbc=s900-c-k-c0x00ffffff-no-rj" class="bookmark-image"/></a></figure></div></article></body></html>
