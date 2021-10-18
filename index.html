@@ -659,75 +659,75 @@ pip install pandas
 pip install ta
 pip install ftx
 pip install ciso8601</code></pre><p id="3a72ef99-9d74-43e9-bbf2-ee7eba56914c" class="">Vous avez maintenant tous les prérequis pour ajouter votre script python de bot de trading pour ça faites : </p><p id="a806caa3-6268-4fc5-9e9f-2b5d05325140" class=""> </p><pre id="242b1d09-5599-44fa-9fcf-7401fbad426e" class="code"><code>nano firstBot.py</code></pre><p id="bd5caa50-861a-403b-83f8-8fc9a3319451" class="">Vous devez maintenant être dans un éditeur de code, vous pouvez copier le code ci dessous et le coller (clique droit pour coller dans une console ubuntu) dans votre éditeur de code nano :</p><pre id="58afb82c-6ac4-45a2-aa34-bb5c8a1e10ac" class="code"><code>import ftx
-    import pandas as pd
-    import ta
-    import time
-    import json
-    from math import *
-    
-    accountName = &#x27;&#x27;
-    pairSymbol = &#x27;ETH/USD&#x27;
-    fiatSymbol = &#x27;USD&#x27;
-    cryptoSymbol = &#x27;ETH&#x27;
-    myTruncate = 3
-    
-    client = ftx.FtxClient(api_key=&#x27;&#x27;,
-                       api_secret=&#x27;&#x27;, subaccount_name=accountName)
-    
-    data = client.get_historical_data(
-        market_name=pairSymbol, 
-        resolution=3600, 
-        limit=1000, 
-        start_time=float(
-        round(time.time()))-100*3600, 
-        end_time=float(round(time.time())))
-    df = pd.DataFrame(data)
-    
-    df[&#x27;EMA28&#x27;]=ta.trend.ema_indicator(df[&#x27;close&#x27;], 28)
-    df[&#x27;EMA48&#x27;]=ta.trend.ema_indicator(df[&#x27;close&#x27;], 48)
-    df[&#x27;STOCH_RSI&#x27;]=ta.momentum.stochrsi(df[&#x27;close&#x27;])
-    #print(df)
-    
-    def getBalance(myclient, coin):
-        jsonBalance = myclient.get_balances()
-        if jsonBalance == []: 
-            return 0
-        pandaBalance = pd.DataFrame(jsonBalance)
-        print(pandaBalance)
-        if pandaBalance.loc[pandaBalance[&#x27;coin&#x27;] == coin].empty: 
-            return 0
-        else: 
-            return float(pandaBalance.loc[pandaBalance[&#x27;coin&#x27;] == coin][&#x27;total&#x27;])
-    
-    def truncate(n, decimals=0):
-        r = floor(float(n)*10**decimals)/10**decimals
-        return str(r)
-        
-    
-    actualPrice = df[&#x27;close&#x27;].iloc[-1]
-    fiatAmount = getBalance(client, fiatSymbol)
-    cryptoAmount = getBalance(client, cryptoSymbol)
-    print(&#x27;coin price :&#x27;,actualPrice, &#x27;usd balance&#x27;, fiatAmount, &#x27;coin balance :&#x27;,cryptoAmount)
-    
-    if float(fiatAmount) &gt; 5 and df[&#x27;EMA28&#x27;].iloc[-2] &gt; df[&#x27;EMA48&#x27;].iloc[-2] and df[&#x27;STOCH_RSI&#x27;].iloc[-2] &lt; 0.8:
-        quantityBuy = truncate(float(fiatAmount)/actualPrice, myTruncate)
-        buyOrder = client.place_order(
-            market=pairSymbol, 
-            side=&quot;buy&quot;, 
-            price=None, 
-            size=quantityBuy, 
-            type=&#x27;market&#x27;)
-        print(buyOrder)
-    
-    elif float(cryptoAmount) &gt; 0.001 and df[&#x27;EMA28&#x27;].iloc[-2] &lt; df[&#x27;EMA48&#x27;].iloc[-2] and df[&#x27;STOCH_RSI&#x27;].iloc[-2] &gt; 0.2:
-        buyOrder = client.place_order(
-            market=pairSymbol, 
-            side=&quot;sell&quot;, 
-            price=None, 
-            size=truncate(cryptoAmount, myTruncate), 
-            type=&#x27;market&#x27;)
-        print(buyOrder)
-    else :
+import pandas as pd
+import ta
+import time
+import json
+from math import *
+
+accountName = &#x27;&#x27;
+pairSymbol = &#x27;ETH/USD&#x27;
+fiatSymbol = &#x27;USD&#x27;
+cryptoSymbol = &#x27;ETH&#x27;
+myTruncate = 3
+
+client = ftx.FtxClient(api_key=&#x27;&#x27;,
+                   api_secret=&#x27;&#x27;, subaccount_name=accountName)
+
+data = client.get_historical_data(
+    market_name=pairSymbol, 
+    resolution=3600, 
+    limit=1000, 
+    start_time=float(
+    round(time.time()))-100*3600, 
+    end_time=float(round(time.time())))
+df = pd.DataFrame(data)
+
+df[&#x27;EMA28&#x27;]=ta.trend.ema_indicator(df[&#x27;close&#x27;], 28)
+df[&#x27;EMA48&#x27;]=ta.trend.ema_indicator(df[&#x27;close&#x27;], 48)
+df[&#x27;STOCH_RSI&#x27;]=ta.momentum.stochrsi(df[&#x27;close&#x27;])
+#print(df)
+
+def getBalance(myclient, coin):
+    jsonBalance = myclient.get_balances()
+    if jsonBalance == []: 
+        return 0
+    pandaBalance = pd.DataFrame(jsonBalance)
+    print(pandaBalance)
+    if pandaBalance.loc[pandaBalance[&#x27;coin&#x27;] == coin].empty: 
+        return 0
+    else: 
+        return float(pandaBalance.loc[pandaBalance[&#x27;coin&#x27;] == coin][&#x27;total&#x27;])
+
+def truncate(n, decimals=0):
+    r = floor(float(n)*10**decimals)/10**decimals
+    return str(r)
+
+
+actualPrice = df[&#x27;close&#x27;].iloc[-1]
+fiatAmount = getBalance(client, fiatSymbol)
+cryptoAmount = getBalance(client, cryptoSymbol)
+print(&#x27;coin price :&#x27;,actualPrice, &#x27;usd balance&#x27;, fiatAmount, &#x27;coin balance :&#x27;,cryptoAmount)
+
+if float(fiatAmount) &gt; 5 and df[&#x27;EMA28&#x27;].iloc[-2] &gt; df[&#x27;EMA48&#x27;].iloc[-2] and df[&#x27;STOCH_RSI&#x27;].iloc[-2] &lt; 0.8:
+    quantityBuy = truncate(float(fiatAmount)/actualPrice, myTruncate)
+    buyOrder = client.place_order(
+        market=pairSymbol, 
+        side=&quot;buy&quot;, 
+        price=None, 
+        size=quantityBuy, 
+        type=&#x27;market&#x27;)
+    print(buyOrder)
+
+elif float(cryptoAmount) &gt; 0.001 and df[&#x27;EMA28&#x27;].iloc[-2] &lt; df[&#x27;EMA48&#x27;].iloc[-2] and df[&#x27;STOCH_RSI&#x27;].iloc[-2] &gt; 0.2:
+    buyOrder = client.place_order(
+        market=pairSymbol, 
+        side=&quot;sell&quot;, 
+        price=None, 
+        size=truncate(cryptoAmount, myTruncate), 
+        type=&#x27;market&#x27;)
+    print(buyOrder)
+else :
       print(&quot;No opportunity to take&quot;)</code></pre><p id="a5475d51-df4f-4bc1-878d-c93466f717f1" class="">Ce code est le script du cross EMA + stoch RSI, vous pouvez l&#x27;utiliser à votre guise nous proposons le code open source ou vous pouvez créer votre propre script</p><p id="f6c6c6d4-e2aa-48ed-b906-a9468ebbf646" class="">
     </p><p id="3c2c023f-5cf9-4689-b09d-27b342ea0cfc" class="">N&#x27;oubliez pas de remplacer avec les infos de votre compte FTX, remplissez avec votre account_name et remplissez vos 2 api keys dans la ligne &quot;client = ftx.Client...&quot;</p><p id="88534f46-c3a5-459f-b88b-d0e16129374e" class="">
     </p><p id="1403bb9e-7711-4a65-acc3-4cfa47300cac" class="">Une fois que vous avez copié collé ceci vous faire Ctrl+s pour sauvegarder et Ctrl+x pour quitter.</p><p id="4969274f-0331-4015-b1ac-4f773243ace5" class="">Vous pouvez maintenant essayer d&#x27;exécuter votre code à la main avec :</p><pre id="57937ed9-26f3-4609-ac29-7cb3acfc7554" class="code"><code>python3 firstBot.py</code></pre><p id="c966ae7f-1888-4c3f-96a0-df7baee71883" class="">Si cela ne vous affiche pas d&#x27;erreur votre bot est prêt à marcher.</p><p id="92a45ffe-491d-465a-a83c-2e4e86c037da" class="">
