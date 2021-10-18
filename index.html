@@ -652,7 +652,8 @@
     </p><p id="f7992a40-9939-43e7-a6b7-c3d574ec50f8" class="">Maintenant vous pouvez ouvrir Putty, dans la barre hostname vous remplissez avec votre DNS IPv4 public que vous pouvez trouver dans aws-ec2-instance et vous rajouter devant @ubuntu exemple :</p><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="a7bf33df-9655-439e-ab56-18910d39bb8c"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%">ubuntu@ec2-15-188-82-81.eu-west-3.compute.amazonaws.com</div></figure><p id="ce8214cb-fb79-4601-a076-5b5926f93139" class="">
     </p><p id="73b2c8a3-3b38-40b1-9c19-4bf12e405ea0" class="">Ensuite dans le menu à gauche cliquez sur le bouton &quot;<mark class="highlight-orange_background">+</mark>&quot; de &quot;SSH&quot; et cliquez sur &quot;<mark class="highlight-orange_background">auth</mark>&quot;, puis cliquez sur &quot;<mark class="highlight-orange_background">Browse</mark>&quot; pour le champs Private key file for authentification, parcourez jusqu&#x27;à sélectionner le fichier .ppk que vous avez générer plus tôt grâce à PuttyGen. Ensuite vous pouvez revenir dans Session tout en haut à gauche et cliquer sur &quot;<mark class="highlight-orange_background">Open</mark>&quot;
     
-    Vous êtes normalement maintenant sur votre console de votre serveur AWS. Pour installer votre bot de trading tapez les commandes suivantes dans l&#x27;ordre : </p><pre id="7483ada7-3440-43b0-b629-966fcc289304" class="code"><code>sudo apt-get update
+    Vous êtes normalement maintenant sur votre console de votre serveur AWS. Pour installer votre bot de trading tapez les commandes suivantes dans l&#x27;ordre : </p><pre id="7483ada7-3440-43b0-b629-966fcc289304" class="code"><code>
+    sudo apt-get update
     sudo apt install python3-pip
     pip install pandas
     pip install ta
